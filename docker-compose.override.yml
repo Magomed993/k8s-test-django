@@ -1,0 +1,10 @@
+services:
+  db_psql:
+    extends:
+      file: docker-compose.yml
+      service: db
+    ports:
+      - "5433:5432"
+
+volumes:
+  db_data:
