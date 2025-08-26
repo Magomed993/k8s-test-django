@@ -93,3 +93,36 @@ $ docker compose build web
     ```shell
    kubectl create secret generic django-secret --from-env-file=.env
     ```
+## Создание Ingress
+Создаём файл `ingress.yaml` для работы с доменами:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: your_name
+
+spec:
+  rules:
+    - host: your_host
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: your_service_name
+                port:
+                  number: your_number_port
+```
+Далее активируем данный файл:
+```shell
+kubectl apply -f ingress.yaml
+```
+Если работаем через minikube локально, то необходимо активировать NGINX Ingress Controller:
+```shell
+minikube addons enable ingress
+```
+Локально, у себя на компьютере находим файл `/etc/hosts` и прописываем:
+```text
+<minikube_ip> <domen>
+```
