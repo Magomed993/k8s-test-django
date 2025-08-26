@@ -126,3 +126,33 @@ minikube addons enable ingress
 ```text
 <minikube_ip> <domen>
 ```
+## Создание CronJob
+Создаём файл `clearsession_cronjob.yaml` для ежемесячной очистки сессии Django:
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: django-clearsessions-once # Наименование CronJob
+spec:
+  schedule: "0 0 1 * *" # Указывается первый день начала каждого месяца в 00ч 00мин
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: name_container
+            image: your_image
+            command: ["python", "manage.py", "clearsessions"]
+            envFrom:
+              - secretRef:
+                  name: django-secret
+          restartPolicy: OnFailure
+```
+Применяем:
+```shell
+kubectl apply -f clearsession_cronjob.yaml
+```
+Если ждать первое число долго, но проверить задачу хочется, то создаём `job` из имеющегося `cronjob`:
+```shell
+kubectl create job clearsession-job --from=cronjob/django-clearsessions-once
+```
