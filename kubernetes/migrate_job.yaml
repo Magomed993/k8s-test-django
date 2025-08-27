@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate
+spec:
+  ttlSecondsAfterFinished: 1500   # Время, через которое задача должна удалиться после выполнения
+  template:
+    spec:
+      containers:
+      - name: django-migrate
+        image: magomed993/django_app:latest
+        command: ["python", "manage.py", "migrate", "--no-input"]
+        envFrom:
+          - secretRef:
+              name: django-secret
+      restartPolicy: OnFailure
