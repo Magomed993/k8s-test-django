@@ -3,9 +3,11 @@ kind: CronJob
 metadata:
   name: django-clearsessions-once
 spec:
-  schedule: "0 0 1 * *"
+  startingDeadlineSeconds: 30     # Время, через которое задача должна начаться (крайний срок для запуска задания)
+  schedule: "0 0 1 * *"           # Последовательность выполнения задачи (сек., мин., день, месяц, год)
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 1500   # Время, через которое задача должна удалиться после выполнения
       template:
         spec:
           containers:
