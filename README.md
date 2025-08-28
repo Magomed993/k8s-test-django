@@ -75,6 +75,26 @@ $ docker compose build web
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+## Создание кластера Minikube
+Скачайте [Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download) на ПК. \
+Запустите кластер Minikube:
+```shell
+minikube start --driver=kvm2
+```
+У Minikube работает свой формат Docker. Для сопряжения с Docker установленным локально пропишите команду в Linux:
+```shell
+eval $(minikube docker-env)
+```
+## Создание БД внутри кластера
+Для создания БД внутри кластера для начала устанавливаем [helm](https://helm.sh/) в ОС. \
+Далее производим установку пакета postgresql:
+```bash
+helm install name \
+--set auth.username=<your_user_name> \
+--set auth.password=<password_db> \
+--set auth.database=<name_db> \
+oci://<REGISTRY_NAME>/<REPOSITORY_NAME>/postgresql
+```
 ## Создание Secret через kubectl
 Для создания секретных файлов в k8s используется несколько методов:
 1. Создание Secret через yaml файл. Пример `secret.yaml`:
