@@ -24,22 +24,3 @@ spec:
           envFrom:
             - secretRef:
                 name: django-secret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: django-svc
-  labels:
-    app.kubernetes.io/name: django
-    app.kubernetes.io/instance: django-svc
-    app.kubernetes.io/version: "1.0"
-    app.kubernetes.io/component: server
-spec:
-  selector:
-    project: django
-  ports:
-    - name      : app-listener
-      protocol  : TCP
-      port      : 80
-      targetPort: 80
-  type: NodePort
