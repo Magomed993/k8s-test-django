@@ -176,3 +176,47 @@ kubectl apply -f clearsession_cronjob.yaml
 ```shell
 kubectl create job clearsession-job --from=cronjob/django-clearsessions-once
 ```
+## Как подготовить dev-окружение
+Скачайте и установите [k9s](https://k9scli.io/). Он необходим для удобства и полного контроля в использовании между кластерами. \
+Для запуска сервиса в yandex cloud производится:
+1. Подключение к кластеру Yandex cloud
+   1. [Установите CLI](https://yandex.cloud/ru/docs/cli/operations/install-cli)
+   2. [Добавьте учетные данные](https://yandex.cloud/ru/docs/managed-kubernetes/operations/connect/#kubectl-connect) кластера Kubernetes в конфигурационный файл kubectl:
+   ```
+   yc managed-kubernetes cluster \
+   get-credentials <имя_или_идентификатор_кластера> \
+   --external
+   ```
+2. Используйте утилиту kubectl для работы с кластером Kubernetes:
+3. ```
+   kubectl get cluster-info
+   kubectl get pods --namespace=<your-namespace>
+   ```
+
+### Получение SSL-сертификата для подключения к базе данных PostgreSQL
+Для использования базы данных PostgreSQL, получите SSL-сертификат:
+```shell
+mkdir -p ~/.postgresql && \
+wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" \
+     --output-document ~/.postgresql/root.crt && \
+chmod 0600 ~/.postgresql/root.crt
+```
+Сертификат будет сохранен в `home/root/.postgresql/root.crt`
+### Создание Secret и шифрование файла в base64
+Прежде чем создать файл Secret, необходимо зашифровать [полученный файл SSL](#получение-ssl-сертификата-для-подключения-к-базе-данных-postgresql):
+```shell
+cat root.crt | base64 -w0
+```
+Далее создаём манифест и заносим зашифрованные данные:
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ssl-cert
+data:
+  root.crt: base64_file_path_encryption
+```
+Запускаем данный манифест:
+```shell
+kubectl apply -f ssl-secret.yaml
+```
