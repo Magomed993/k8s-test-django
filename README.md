@@ -220,3 +220,17 @@ data:
 ```shell
 kubectl apply -f ssl-secret.yaml
 ```
+## Образ в [Docker Hub](https://hub.docker.com/)
+Прежде чем начать, необходимо собрать свой docker-compose.yml \
+Далее необходимый файл после сборки нужно построить командой:
+```shell
+docker compose build
+```
+При необходимости, тегируем образ:
+```shell
+docker tag image my_name/image:tag
+```
+И публикуем:
+```shell
+docker push my_name/image:tag
+```
