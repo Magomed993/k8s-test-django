@@ -238,6 +238,7 @@ docker push my_name/image:tag
 Создаём `Deployment` и `Service` из нашего проекта, который ранее публиковали в [Docker Hub](https://hub.docker.com/), 
 прикрепляем `Secret`. \
 Далее проект Django доступен по Вашим настройкам ALB. \
+[Пример проекта](https://edu-magomed-sagidnurov.yc-sirius-dev.pelid.team/) \
 Для проверки проекта заходим на Pod проекта Django shell (можно через Lens, через k9s или же `kubectl exec`). \
 Вводим команду:
 ```shell
