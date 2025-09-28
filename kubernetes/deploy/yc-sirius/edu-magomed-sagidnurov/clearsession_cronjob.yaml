@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: django-clearsessions-once
+spec:
+  startingDeadlineSeconds: 30     # Время, через которое задача должна начаться (крайний срок для запуска задания)
+  schedule: "0 0 1 * *"           # Последовательность выполнения задачи (сек., мин., день, месяц, год)
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 1500   # Время, через которое задача должна удалиться после выполнения
+      template:
+        spec:
+          containers:
+          - name: django-clearsession
+            image: magomed993/django_app:latest
+            command: ["python", "manage.py", "clearsessions"]
+            envFrom:
+              - secretRef:
+                  name: django-secret
+          restartPolicy: OnFailure
